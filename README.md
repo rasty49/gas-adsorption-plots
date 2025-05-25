@@ -1,5 +1,7 @@
 # Gas Adsorption Interactive Plots
 
+<!-- Trigger deployment workflow -->
+
 Interactive visualizations of gas adsorption isotherms and Langmuir equations for educational purposes.
 
 ## Features
@@ -12,7 +14,7 @@ Interactive visualizations of gas adsorption isotherms and Langmuir equations fo
 
 ## Live Demo
 
-🌐 **[View Live Demo](https://yourusername.github.io/gas-adsorption-plots/)**
+🌐 **[View Live Demo](https://rasty49.github.io/gas-adsorption-plots/)**
 
 ## Physics Background
 
@@ -63,115 +65,93 @@ The built files will be in the `dist` folder.
 
 ## Deployment to GitHub Pages
 
-### Method 1: Using GitHub Actions (Recommended)
+### Step-by-Step GitHub Upload
 
 1. **Create a GitHub repository**:
-   - Go to [GitHub](https://github.com) and create a new repository
-   - Name it `gas-adsorption-plots` (or any name you prefer)
-   - Make it public
+   - Go to [GitHub](https://github.com) and sign in
+   - Click the "+" icon → "New repository"
+   - Name it `gas-adsorption-plots`
+   - Make it **Public**
+   - **Don't** initialize with README (we already have one)
+   - Click "Create repository"
 
-2. **Upload your code**:
+2. **Upload your files**:
+   
+   **Option A: Using GitHub Desktop (Easiest)**
+   - Download [GitHub Desktop](https://desktop.github.com/)
+   - Click "Clone a repository from the Internet"
+   - Enter your repository URL
+   - Choose local path and clone
+   - Copy all your project files into the cloned folder
+   - Commit and push
+
+   **Option B: Using Web Interface**
+   - On your new repository page, click "uploading an existing file"
+   - Drag and drop ALL your project files
+   - Write commit message: "Initial commit"
+   - Click "Commit changes"
+
+   **Option C: Using Command Line**
    ```bash
    git init
    git add .
    git commit -m "Initial commit"
    git branch -M main
-   git remote add origin https://github.com/yourusername/gas-adsorption-plots.git
+   git remote add origin https://github.com/YOURUSERNAME/gas-adsorption-plots.git
    git push -u origin main
    ```
 
-3. **Create GitHub Actions workflow**:
-   - Create `.github/workflows/deploy.yml` in your repository
-   - Copy the workflow configuration (see below)
-
-4. **Enable GitHub Pages**:
+3. **Enable GitHub Pages**:
    - Go to repository Settings → Pages
-   - Source: GitHub Actions
-   - Your site will be available at: `https://yourusername.github.io/gas-adsorption-plots/`
+   - Source: **GitHub Actions**
+   - Save
 
-### GitHub Actions Workflow
+4. **Your site will be live at**:
+   ```
+   https://YOURUSERNAME.github.io/gas-adsorption-plots/
+   ```
 
-Create `.github/workflows/deploy.yml`:
+## Troubleshooting Upload Issues
 
-```yaml
-name: Deploy to GitHub Pages
+### If you can't upload all files:
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+1. **File size issues**: Make sure you're not uploading `node_modules` folder (it should be ignored)
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Build
-      run: npm run build
-      
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main'
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
+2. **Too many files**: Upload in batches:
+   - First: Upload `package.json`, `vite.config.js`, `index.html`, `README.md`
+   - Second: Upload the `src` folder
+   - Third: Upload the `.github` folder
+
+3. **Git LFS issues**: For large files, you might need Git Large File Storage
+
+4. **Permission issues**: Make sure the repository is public
+
+### Alternative: Use GitHub CLI
+
+```bash
+# Install GitHub CLI first
+gh repo create gas-adsorption-plots --public
+git remote add origin https://github.com/YOURUSERNAME/gas-adsorption-plots.git
+git push -u origin main
 ```
-
-### Method 2: Manual Deployment
-
-1. **Build the project**:
-   ```bash
-   npm run build
-   ```
-
-2. **Install gh-pages**:
-   ```bash
-   npm install --save-dev gh-pages
-   ```
-
-3. **Add deploy script** to `package.json`:
-   ```json
-   {
-     "scripts": {
-       "deploy": "gh-pages -d dist"
-     }
-   }
-   ```
-
-4. **Deploy**:
-   ```bash
-   npm run deploy
-   ```
 
 ## Project Structure
 
 ```
 gas-adsorption-plots/
-├── public/
+├── .github/workflows/deploy.yml    # Auto-deployment
 ├── src/
 │   ├── components/
-│   │   └── Exercise1Plots.jsx    # Main plotting component
-│   ├── App.jsx                   # Main app component
-│   ├── App.css                   # App styles
-│   ├── main.jsx                  # React entry point
-│   └── index.css                 # Global styles
-├── index.html                    # HTML template
-├── package.json                  # Dependencies and scripts
-├── vite.config.js               # Vite configuration
-└── README.md                    # This file
+│   │   └── Exercise1Plots.jsx     # Your plots
+│   ├── App.jsx                    # Main app
+│   ├── App.css                    # App styles
+│   ├── main.jsx                   # Entry point
+│   └── index.css                  # Global styles
+├── .gitignore                     # Git ignore
+├── index.html                     # HTML template
+├── package.json                   # Dependencies
+├── vite.config.js                # Build config
+└── README.md                     # This file
 ```
 
 ## Technologies Used

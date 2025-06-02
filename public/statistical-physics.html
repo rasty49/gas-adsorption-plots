@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 1 & 2 Visualizations</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+
+        .exercise-section {
+            margin-bottom: 50px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .exercise-title {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plot-container {
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .plot-title {
+            font-size: 1.3em;
+            color: #34495e;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(52, 73, 94, 0.1);
+            border-radius: 10px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .control-group input, .control-group select {
+            padding: 8px 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .control-group input:focus, .control-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .icon {
+            font-size: 1.2em;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+            .controls {
+                flex-direction: column;
+            }
+        }
+
+        .physics-insight {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-style: italic;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="nav-link">← Back to Gas Adsorption</a>
+    
+    <div class="container">
+        <h1>🔬 H6_Statistical Physics Visualizations</h1>
+        <p class="subtitle">Interactive plots for Superfluid Helium and Bose-Einstein Gas</p>
+
+        <div class="exercise-section">
+            <h2 class="exercise-title">
+                <span class="icon">🌊</span>
+                Exercise 1: Superfluid Helium - Roton Dispersion
+            </h2>
+
+            <div class="plot-container">
+                <div class="plot-title">Dispersion Relation: Phonons and Rotons</div>
+                <div id="dispersion-plot"></div>
+                <div class="physics-insight">
+                    <strong>Physics Insight:</strong> The unique "roton minimum" at k₀ creates a gap in the excitation spectrum, 
+                    leading to the exotic properties of superfluid helium. This minimum explains why rotons have activated behavior.
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Gap Δ (K):</label>
+                    <input type="range" id="delta-slider" min="5" max="15" value="8.6" step="0.1">
+                    <span id="delta-value">8.6</span>
+                </div>
+                <div class="control-group">
+                    <label>k₀ (Å⁻¹):</label>
+                    <input type="range" id="k0-slider" min="1.5" max="2.5" value="1.9" step="0.1">
+                    <span id="k0-value">1.9</span>
+                </div>
+                <div class="control-group">
+                    <label>Temperature (K):</label>
+                    <input type="range" id="temp-slider" min="0.5" max="3.0" value="1.5" step="0.1">
+                    <span id="temp-value">1.5</span>
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="plot-container">
+                    <div class="plot-title">Heat Capacity vs Temperature</div>
+                    <div id="heat-capacity-plot"></div>
+                </div>
+                <div class="plot-container">
+                    <div class="plot-title">Roton Population vs Temperature</div>
+                    <div id="roton-population-plot"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="exercise-section">
+            <h2 class="exercise-title">
+                <span class="icon">❄️</span>
+                Exercise 2: d-Dimensional Bose-Einstein Gas
+            </h2>
+
+            <div class="controls">
+                <div class="control-group">
+                    <label>Dimension d:</label>
+                    <select id="dimension-select">
+                        <option value="1">1D</option>
+                        <option value="2">2D</option>
+                        <option value="3" selected>3D</option>
+                        <option value="4">4D</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Energy exponent b:</label>
+                    <input type="range" id="b-slider" min="1" max="3" value="2" step="0.1">
+                    <span id="b-value">2.0</span>
+                </div>
+                <div class="control-group">
+                    <label>Temperature (T/T_c):</label>
+                    <input type="range" id="temp-ratio-slider" min="0.5" max="3.0" value="1.0" step="0.05">
+                    <span id="temp-ratio-value">1.0</span>
+                </div>
+            </div>
+
+            <div class="plot-container">
+                <div class="plot-title">Convergence Analysis: I(d/b) Integral</div>
+                <div id="convergence-plot"></div>
+                <div class="physics-insight">
+                    <strong>Convergence Condition:</strong> The integral I(d/b) converges only when d/b > 1, 
+                    which determines whether Bose-Einstein condensation can occur in d dimensions.
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="plot-container">
+                    <div class="plot-title">Bose-Einstein Distribution</div>
+                    <div id="bose-distribution-plot"></div>
+                </div>
+                <div class="plot-container">
+                    <div class="plot-title">Critical Temperature vs Dimension</div>
+                    <div id="critical-temp-plot"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Constants and utility functions
+        const kB = 1; // Boltzmann constant (set to 1 for simplicity in units)
+        const hbar = 1; // Reduced Planck constant (set to 1 for simplicity in units)
+        const c = 1; // Speed of sound (set to 1 for simplicity in units)
+        // Effective mass 'm' for rotons is assumed to be 1 in the dispersion relation E_roton,
+        // as hbar^2/(2m) becomes hbar*hbar/2. This is a common simplification if m is not varied.
+
+        // Exercise 1: Superfluid Helium
+        function updateDispersionPlot() {
+            const delta = parseFloat(document.getElementById('delta-slider').value);
+            const k0 = parseFloat(document.getElementById('k0-slider').value);
+
+            document.getElementById('delta-value').textContent = delta.toFixed(1);
+            document.getElementById('k0-value').textContent = k0.toFixed(1);
+
+            const k_values = [];
+            const E_phonon = [];
+            const E_roton = [];
+
+            // Phonon branch (E = hbar * c * k)
+            // For k <= k0 (approx.)
+            for (let k = 0; k <= k0 + 0.025; k += 0.05) { // Extend slightly to ensure smooth connection if k0 is a multiple of step
+                k_values.push(k);
+                if (k <= k0) {
+                    E_phonon.push(hbar * c * k);
+                    E_roton.push(null);
+                } else { // Smoothly transition or prepare for roton branch if k slightly > k0
+                     E_phonon.push(null);
+                     // The roton formula is E = Delta + hbar^2/(2m) * (k-k0)^2
+                     // With hbar=1 and assuming effective mass m=1, this becomes Delta + 0.5 * (k-k0)^2
+                     E_roton.push(delta + (hbar * hbar / 2) * Math.pow(Math.max(0, k - k0), 2));
+                }
+            }
+            
+            // Ensure k_values are sorted and unique for plotting, especially around k0
+            let unique_k_values = [...new Set(k_values)].sort((a,b) => a-b);
+            let E_phonon_plot = [];
+            let E_roton_plot = [];
+
+            unique_k_values.forEach(k_val => {
+                if (k_val <= k0) {
+                    E_phonon_plot.push(hbar * c * k_val);
+                    E_roton_plot.push(null);
+                } else {
+                    E_phonon_plot.push(null);
+                    E_roton_plot.push(delta + (hbar * hbar / 2) * Math.pow(k_val - k0, 2));
+                }
+            });
+            
+            // Add more points for roton branch if needed, ensuring k_values extend sufficiently
+            let last_k = unique_k_values[unique_k_values.length-1];
+            for (let k = Math.max(k0, last_k + 0.05) ; k <= 4; k += 0.05) {
+                 if (!unique_k_values.includes(k)) unique_k_values.push(k);
+            }
+            unique_k_values.sort((a,b)=>a-b);
+
+            // Recalculate E_phonon and E_roton for the final sorted unique_k_values
+            E_phonon_plot = [];
+            E_roton_plot = [];
+             unique_k_values.forEach(k_val => {
+                if (k_val <= k0) {
+                    E_phonon_plot.push(hbar * c * k_val);
+                    E_roton_plot.push(null);
+                } else {
+                    E_phonon_plot.push(null);
+                     // Roton energy: Delta + (hbar^2 / (2*m_eff)) * (k - k0)^2
+                     // Assuming hbar=1, m_eff=1 for this visualization.
+                    E_roton_plot.push(delta + (hbar * hbar / 2) * Math.pow(k_val - k0, 2));
+                }
+            });
+
+
+            const trace1 = {
+                x: unique_k_values,
+                y: E_phonon_plot,
+                mode: 'lines',
+                name: 'Phonons (E = ħck)',
+                line: { color: '#3498db', width: 3 }
+            };
+
+            const trace2 = {
+                x: unique_k_values,
+                y: E_roton_plot,
+                mode: 'lines',
+                name: 'Rotons (E = Δ + ħ²(k-k₀)²/(2m*))', // m* assumed 1
+                line: { color: '#e74c3c', width: 3 }
+            };
+
+            const layout = {
+                xaxis: { title: 'Wavevector k (Å⁻¹)', showgrid: true, range: [0, 4] },
+                yaxis: { title: 'Energy E (K)', showgrid: true },
+                showlegend: true,
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                font: { family: 'Segoe UI', size: 12 }
+            };
+
+            Plotly.newPlot('dispersion-plot', [trace1, trace2], layout, {responsive: true});
+        }
+
+        function updateHeatCapacityPlot() {
+            const delta = parseFloat(document.getElementById('delta-slider').value);
+            const k0 = parseFloat(document.getElementById('k0-slider').value);
+            // const temp = parseFloat(document.getElementById('temp-slider').value); // Not directly used for T-sweep
+
+            const T_values = [];
+            const C_values = [];
+
+            for (let T = 0.5; T <= 5; T += 0.05) { // Increased points for smoother curve
+                T_values.push(T);
+                const beta = 1 / (kB * T);
+                // Heat capacity C/V for rotons is proportional to k₀² * Δ² * β^(3/2) * exp(-βΔ)
+                // Assuming hbar=1, kB=1, effective mass m=1. Numerical prefactors are absorbed into "arb. units".
+                // The key correction is adding Math.pow(delta, 2)
+                const C = Math.pow(delta, 2) * Math.pow(beta, 1.5) * Math.exp(-beta * delta) * Math.pow(k0, 2);
+                C_values.push(C > 1e-6 ? C : 1e-6); // Prevent zero or negative on log scale if C is too small
+            }
+
+            const trace = {
+                x: T_values,
+                y: C_values,
+                mode: 'lines',
+                name: 'C/V (Rotons)',
+                line: { color: '#9b59b6', width: 3 }
+            };
+
+            const layout = {
+                xaxis: { title: 'Temperature (K)', showgrid: true },
+                yaxis: { title: 'Heat Capacity (arb. units)', type: 'log', showgrid: true, autorange: true },
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                font: { family: 'Segoe UI', size: 12 }
+            };
+
+            Plotly.newPlot('heat-capacity-plot', [trace], layout, {responsive: true});
+        }
+
+        function updateRotonPopulationPlot() {
+            const delta = parseFloat(document.getElementById('delta-slider').value);
+            const temp = parseFloat(document.getElementById('temp-slider').value);
+
+            document.getElementById('temp-value').textContent = temp.toFixed(1);
+
+            const E_excitation_values = []; // Energy above the gap: E_roton - Delta
+            const n_values = [];
+
+            // Iterate over excitation energy E_exc = E_roton - Delta
+            // So, E_roton = E_exc + Delta
+            for (let E_exc = 0.01; E_exc <= 20; E_exc += 0.2) { // Start E_exc slightly above 0 for log plot
+                E_excitation_values.push(E_exc);
+                const E_roton_abs = E_exc + delta; // Absolute energy of the roton
+                const beta = 1 / (kB * temp);
+                // Bose-Einstein distribution for rotons (excitations, so chemical potential mu=0)
+                // n(E_roton) = 1 / (exp(beta * E_roton_abs) - 1)
+                const n = 1 / (Math.exp(beta * E_roton_abs) - 1);
+                n_values.push(n > 1e-8 ? n : 1e-8); // Prevent negative/zero for log scale
+            }
+
+            const trace = {
+                x: E_excitation_values,
+                y: n_values,
+                mode: 'lines',
+                name: `T = ${temp.toFixed(1)} K`,
+                line: { color: '#e67e22', width: 3 }
+            };
+
+            const layout = {
+                xaxis: { title: 'Roton Excitation Energy (E_roton - Δ) (K)', showgrid: true },
+                yaxis: { title: 'Occupation Number n(E)', type: 'log', showgrid: true, autorange: true },
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                font: { family: 'Segoe UI', size: 12 }
+            };
+
+            Plotly.newPlot('roton-population-plot', [trace], layout, {responsive: true});
+        }
+
+        // Exercise 2: Bose-Einstein Gas (original code unchanged)
+        function updateConvergencePlot() {
+            const d = parseFloat(document.getElementById('dimension-select').value);
+            const b = parseFloat(document.getElementById('b-slider').value);
+
+            document.getElementById('b-value').textContent = b.toFixed(1);
+
+            const x_values = [];
+            const integrand_converging = [];
+            const integrand_diverging = [];
+
+            const ratio_converging = d / b;
+            const ratio_diverging = 0.8; // Example of d/b < 1
+
+            for (let x = 0.01; x <= 5; x += 0.05) {
+                x_values.push(x);
+                
+                // Converging case (d/b > 1)
+                const integrand_conv = Math.pow(x, ratio_converging - 1) / (Math.exp(x) - 1);
+                integrand_converging.push(integrand_conv > 1e-8 ? integrand_conv : 1e-8);
+                                
+                // Diverging case (d/b < 1)
+                const integrand_div = Math.pow(x, ratio_diverging - 1) / (Math.exp(x) - 1);
+                integrand_diverging.push(integrand_div > 1e-8 ? integrand_div : 1e-8);
+            }
+
+            const trace1 = {
+                x: x_values,
+                y: integrand_converging,
+                mode: 'lines',
+                name: `d/b = ${ratio_converging.toFixed(2)} (Integrand behavior)`, // Clarified name
+                line: { color: '#27ae60', width: 3 }
+            };
+
+            const trace2 = {
+                x: x_values,
+                y: integrand_diverging,
+                mode: 'lines',
+                name: `d/b = ${ratio_diverging.toFixed(2)} (Integrand behavior)`, // Clarified name
+                line: { color: '#e74c3c', width: 3, dash: 'dash' }
+            };
+
+            const layout = {
+                xaxis: { title: 'x (Integration variable)', showgrid: true },
+                yaxis: { title: 'Integrand x<sup>d/b-1</sup>/(e<sup>x</sup> - 1)', type: 'log', showgrid: true, autorange: true },
+                showlegend: true,
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                font: { family: 'Segoe UI', size: 12 }
+            };
+
+            Plotly.newPlot('convergence-plot', [trace1, trace2], layout, {responsive: true});
+        }
+
+        function updateBoseDistributionPlot() {
+            const tempRatioInput = document.getElementById('temp-ratio-slider').value; // Keep as string for precise comparison
+            const tempRatio = parseFloat(tempRatioInput);
+
+            document.getElementById('temp-ratio-value').textContent = tempRatio.toFixed(2);
+
+            const E_values = []; // Energy in units of kT_c or some characteristic energy
+            const n_values_T_gt_Tc = []; // T > Tc (z < 1)
+            const n_values_T_eq_Tc = []; // T = Tc (z = 1)
+            const n_values_T_lt_Tc = []; // T < Tc (mu = 0 for E > 0, condensate at E=0)
+
+            // Let E be E_particle / (k_B * T_c)
+            // n(E) = 1 / (exp( (E_particle - mu)/(k_B T) ) - 1)
+            // n(E) = 1 / (exp( (E * T_c - mu/k_B)/T ) - 1)
+            // n(E) = 1 / (exp( E * (Tc/T) - mu/(k_B T) ) - 1)
+            // Let x = E_particle / (k_B T). Then n(x) = 1 / ( z^-1 * exp(x) -1 ), where z = exp(mu/(k_B T))
+
+            for (let energy_kT = 0.01; energy_kT <= 10; energy_kT += 0.1) { // energy_kT = E_particle / (k_B T)
+                E_values.push(energy_kT);
+                let z;
+
+                // T > Tc (tempRatio > 1) => z < 1. For visualization, pick a z.
+                // As T -> infinity, z -> 0 (classical limit). As T -> Tc+, z -> 1.
+                // Let's set z based on T/Tc. A simple model: z = 1 - (1 - z_classical_limit)*(1 - Tc/T) for T > Tc
+                // Or simpler: if T > Tc, z is some value < 1. The original code used z_above = 0.5.
+                // If tempRatio > 1.0 (T > Tc)
+                let z_above = 0.5; // Default for T >> Tc
+                if (tempRatio > 1.0 && tempRatio < 1.5) z_above = 1.0 - 0.5 * (tempRatio - 1.0); // z approaches 1 as T approaches Tc from above
+                z_above = Math.max(0.1, Math.min(z_above, 0.99));
+
+
+                n_values_T_gt_Tc.push(1 / ( (1/z_above)*Math.exp(energy_kT / tempRatio) -1 ) > 1e-8 ? 1 / ( (1/z_above)*Math.exp(energy_kT / tempRatio) -1 ) : 1e-8 );
+
+
+                // T = Tc (tempRatio = 1.0) => z = 1 (mu = 0)
+                n_values_T_eq_Tc.push(1 / (Math.exp(energy_kT) - 1) > 1e-8 ? 1 / (Math.exp(energy_kT) - 1) : 1e-8);
+
+                // T < Tc (tempRatio < 1.0) => mu = 0 for excited states. Condensate at E=0 (not plotted here).
+                // For E > 0, z=1.
+                n_values_T_lt_Tc.push(1 / (Math.exp(energy_kT / tempRatio) - 1) > 1e-8 ? 1 / (Math.exp(energy_kT / tempRatio) - 1) : 1e-8);
+            }
+            
+            let traces = [];
+            if (tempRatio > 1.01) { // Show T > Tc clearly
+                 traces.push({ x: E_values, y: n_values_T_gt_Tc, mode: 'lines', name: `T/T<sub>c</sub> = ${tempRatio.toFixed(2)} > 1 (z < 1)`, line: { color: '#e74c3c', width: 2 } });
+            }
+            if (Math.abs(tempRatio - 1.0) < 0.01) { // Show T = Tc clearly
+                 traces.push({ x: E_values, y: n_values_T_eq_Tc, mode: 'lines', name: `T/T<sub>c</sub> = ${tempRatio.toFixed(2)} ≈ 1 (z = 1)`, line: { color: '#f39c12', width: 3 } });
+            }
+            if (tempRatio < 0.99) { // Show T < Tc clearly
+                 traces.push({ x: E_values, y: n_values_T_lt_Tc, mode: 'lines', name: `T/T<sub>c</sub> = ${tempRatio.toFixed(2)} < 1 (μ=0 for E>0)`, line: { color: '#27ae60', width: 2 } });
+            }
+            // If tempRatio is very close to 1, it might show multiple lines.
+            // Fallback if no specific condition met (should not happen with slider steps)
+            if (traces.length === 0) {
+                 traces.push({ x: E_values, y: n_values_T_eq_Tc, mode: 'lines', name: `T/T<sub>c</sub> = ${tempRatio.toFixed(2)} (z=1 approx.)`, line: { color: '#f39c12', width: 3 } });
+            }
+
+
+            const layout = {
+                xaxis: { title: 'Energy E / (k<sub>B</sub>T)', showgrid: true }, // X-axis is E_particle / (k_B T)
+                yaxis: { title: 'Occupation Number n(E)', type: 'log', showgrid: true, autorange: true },
+                showlegend: true,
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                font: { family: 'Segoe UI', size: 12 }
+            };
+
+            Plotly.newPlot('bose-distribution-plot', traces, layout, {responsive: true});
+        }
+
+
+        function updateCriticalTempPlot() {
+            const b = parseFloat(document.getElementById('b-slider').value);
+
+            const dimensions = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+            const Tc_values = [];
+            const condensation_possible_text = [];
+
+            for (let d of dimensions) {
+                const ratio = d / b;
+                if (ratio > 1) {
+                    // Tc is proportional to (density * h^d / (Omega_d * m^(d/2) * ... * g_{d/b}(1)) )^(b/d)
+                    // For visualization, Tc ~ (something / g_{d/b}(1))^(b/d)
+                    // And g_{d/b}(1) = zeta(d/b).
+                    // Simplified scaling: Tc ~ 1 / (zeta(d/b))^(b/d) or just show if condensation is possible.
+                    // Original code used: const Tc = Math.pow(ratio - 1, 0.5); This is a very simplified scaling.
+                    // Let's keep it for consistency with original intent unless a more complex zeta function is available/needed.
+                    // A more direct visualization would be to plot 1 if d/b > 1 and 0 otherwise.
+                    Tc_values.push(1); // Represents "Condensation Possible" with a value
+                    condensation_possible_text.push('Possible');
+                } else {
+                    Tc_values.push(0); // Represents "Condensation Impossible"
+                    condensation_possible_text.push('Impossible');
+                }
+            }
+
+            const colors = condensation_possible_text.map(x => x === 'Possible' ? '#27ae60' : '#e74c3c');
+
+            const trace = {
+                x: dimensions,
+                y: Tc_values,
+                mode: 'markers+lines',
+                name: `Condensation with E = |p|<sup>${b.toFixed(1)}</sup>`,
+                text: condensation_possible_text, // Text for hover
+                hoverinfo: 'x+text',
+                marker: {
+                    color: colors,
+                    size: 10,
+                    line: { width: 1, color: 'white' }
+                },
+                line: { color: '#3498db', width: 2, shape: 'hv' } // Use 'hv' for step-like plot
+            };
+
+            const layout = {
+                xaxis: { title: 'Dimension d', showgrid: true, dtick:0.5 },
+                yaxis: { 
+                    title: 'Condensation Possible?', 
+                    showgrid: true, 
+                    tickvals: [0, 1], 
+                    ticktext: ['No (d/b ≤ 1)', 'Yes (d/b > 1)'],
+                    range: [-0.5, 1.5] 
+                },
+                annotations: [{
+                    x: (parseFloat(b.toFixed(1)) + 0.2), // Position annotation near threshold
+                    y: 0.5,
+                    ax: 40, ay: -30,
+                    text: `Condensation requires d/b > 1<br>Current threshold: d > ${b.toFixed(1)}`,
+                    showarrow: true,
+                    arrowhead: 2,
+                    arrowsize: 1,
+                    arrowwidth: 1,
+                    bgcolor: 'rgba(255,255,255,0.8)',
+                    bordercolor: '#3498db',
+                    borderwidth: 1,
+                    font: {size: 10}
+                }],
+                plot_bgcolor: '#f8f9fa',
+                paper_bgcolor: 'white',
+                font: { family: 'Segoe UI', size: 12 }
+            };
+
+            Plotly.newPlot('critical-temp-plot', [trace], layout, {responsive: true});
+        }
+
+        // Event listeners
+        document.getElementById('delta-slider').addEventListener('input', () => {
+            updateDispersionPlot();
+            updateHeatCapacityPlot(); // Heat capacity depends on delta
+        });
+
+        document.getElementById('k0-slider').addEventListener('input', () => {
+            updateDispersionPlot();
+            updateHeatCapacityPlot(); // Heat capacity depends on k0
+        });
+
+        document.getElementById('temp-slider').addEventListener('input', updateRotonPopulationPlot);
+
+        document.getElementById('dimension-select').addEventListener('change', () => {
+            updateConvergencePlot();
+            updateCriticalTempPlot();
+        });
+
+        document.getElementById('b-slider').addEventListener('input', () => {
+            updateConvergencePlot();
+            updateCriticalTempPlot();
+        });
+
+        document.getElementById('temp-ratio-slider').addEventListener('input', updateBoseDistributionPlot);
+
+        // Initialize all plots on page load
+        function initializePlots() {
+            updateDispersionPlot();
+            updateHeatCapacityPlot();
+            updateRotonPopulationPlot();
+            updateConvergencePlot();
+            updateBoseDistributionPlot();
+            updateCriticalTempPlot();
+        }
+
+        // Ensure Plotly is loaded before initializing plots
+        if (typeof Plotly !== 'undefined') {
+            initializePlots();
+        } else {
+            // Fallback or error handling if Plotly isn't loaded
+            console.error("Plotly.js not loaded. Plots cannot be initialized.");
+            // You could try to load it dynamically or wait for an event
+        }
+
+    </script>
+</body>
+</html> 
